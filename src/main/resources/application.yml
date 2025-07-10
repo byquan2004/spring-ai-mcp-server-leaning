@@ -16,15 +16,13 @@ logging:
 free-api:
   # 大学信息
   url1: https://api.52vmy.cn/api/query/daxue
-  # 获取音乐
-  url2: https://jx.ykapi.top/API/hqyyid.php
   # girl image
-  url3: https://api.52vmy.cn/api/img/tu/girl
-  # 今日头条
-  url4: http://is.snssdk.com/api/news/feed/v51/
-  # Bing 壁纸
-  url5: https://api.asilu.com/bg/
-  # 实时段子
-  url6: https://api.apiopen.top/getJoke
+  url2: https://api.52vmy.cn/api/img/tu/girl
   # girl video
-  url7: https://api.kuleu.com/api/MP4_xiaojiejie
+  url3: https://api.kuleu.com/api/MP4_xiaojiejie?type=json
+  # 获取新闻
+  url4: https://inshorts.deta.dev/news
+  # 获取天气
+  url5: https://goweather.xyz/weather
+  # 根据ip获取详细信息
+  url6: https://ipinfo.io

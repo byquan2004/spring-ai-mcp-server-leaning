@@ -3,14 +3,11 @@ package com.byquan2004.tools;
 import com.alibaba.fastjson2.JSONObject;
 import com.byquan2004.config.OpenAPIConfig;
 import org.springframework.ai.tool.annotation.Tool;
+import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
-import javax.validation.constraints.NotNull;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 
 /**
  * @author byquan2004
@@ -33,171 +30,83 @@ public class HotToolService {
             about the university name return university base info of json.
             """
     )
-    public JSONObject searchUniversity(@NotNull(message = "the university name be not null") String universityName){
-        try {
-            String url  = config.getUrl1() + "?daxue=" + universityName;
-            ResponseEntity<String> res = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
-
-            if(!res.getStatusCode().is2xxSuccessful()) {
-                JSONObject obj = new JSONObject();
-                obj.put(
-                        "message",
-                        "Sorry, there may be a problem with the service, or the content you searched does not exist."
-                );
-                obj.put("error", res.getStatusCode().toString());
-                return obj;
-            }
-
-            return JSONObject.parse(res.getBody());
-        } catch (Exception e) {
-            return buildErrorResponse("系统异常：" + e.getMessage());
-        }
+    public JSONObject searchUniversity(@ToolParam(description = "universityName") String universityName){
+        String url  = config.getUrl1() + "?daxue=" + universityName;
+        ResponseEntity<String> res = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
+        return JSONObject.parse(res.getBody());
     }
 
     @Tool(
-            name = "random_goddess_image",
+            name = "get_goddess_image",
             description = """
-    获取一张随机女神图片，无需参数，返回图片链接 URL。
+    Get a random goddess picture, without parameters, and return the picture link URL.
     """
     )
-    public JSONObject getRandomGoddessImage() {
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(config.getUrl3(), HttpMethod.GET, null, String.class);
-
-            if (!response.getStatusCode().is2xxSuccessful()) {
-                JSONObject error = new JSONObject();
-                error.put("message", "请求失败，请稍后重试");
-                error.put("error", response.getStatusCode().toString());
-                return error;
-            }
-
-            return JSONObject.parse(response.getBody());
-
-        } catch (Exception e) {
-            return buildErrorResponse("系统异常：" + e.getMessage());
-        }
+    public JSONObject getGoddessImage() {
+        ResponseEntity<String> response = restTemplate.exchange(config.getUrl2(), HttpMethod.GET, null, String.class);
+        return JSONObject.parse(response.getBody());
     }
 
     @Tool(
             name = "get_goddess_video",
             description = """
-        获取高质量小姐姐相关内容视频url访问链接。
+        Get the url access link of high-quality young lady related content video.
         """
     )
     public JSONObject getGoddessVideo() {
-        try {
-            String url = config.getUrl7() + "?type=" + URLEncoder.encode("json", StandardCharsets.UTF_8);
-            ResponseEntity<String> response = restTemplate.exchange(
-                    url, HttpMethod.GET, null, String.class);
-
-            if (response.getStatusCode().is2xxSuccessful()) {
-                return JSONObject.parseObject(response.getBody());
-            } else {
-                return buildErrorResponse("请求失败，状态码：" + response.getStatusCode());
-            }
-        } catch (Exception e) {
-            return buildErrorResponse("系统异常：" + e.getMessage());
-        }
+        ResponseEntity<String> response = restTemplate.exchange(
+                config.getUrl3(), HttpMethod.GET, null, String.class);
+        return JSONObject.parse(response.getBody());
     }
 
     @Tool(
-            name = "get_news_feed",
+            name = "get_news",
             description = """
-        获取新闻资讯内容，接口返回 json 格式数据，包含数据详情、总数、是否有更多数据等信息，来源今日头条。
+           Get news content from various sources collected by Inshorts app.
         """
     )
-    public JSONObject getNewsFeed() {
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(
-                    config.getUrl4(),
-                    HttpMethod.GET,
-                    null,
-                    String.class
-            );
-
-            if (response.getStatusCode().is2xxSuccessful()) {
-                return JSONObject.parseObject(response.getBody());
-            } else {
-                JSONObject error = new JSONObject();
-                error.put("message", "请求失败，请稍后再试");
-                error.put("error", response.getStatusCode().toString());
-                return error;
-            }
-        } catch (Exception e) {
-            return buildErrorResponse("系统异常：" + e.getMessage());
-        }
+    public JSONObject getNews(@ToolParam(description = "category options [all/national/business/sports/world/politics/technology/startup/entertainment/miscellaneous/hatke/science/automobile]")
+                              String category) {
+        ResponseEntity<String> response = restTemplate.exchange(
+                config.getUrl4()+"?category="+category,
+                HttpMethod.GET,
+                null,
+                String.class
+        );
+        return JSONObject.parse(response.getBody());
     }
 
     @Tool(
-            name = "get_bing_wallpaper",
+            name = "get_city_weather",
             description = """
-        获取最近的 Bing 壁纸信息，接口返回 json 格式数据，包含壁纸的 URL、起始日期、版权信息等内容
+        Get city information content.
         """
     )
-    public JSONObject getBingWallpaper() {
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(
-                    config.getUrl5(),
-                    HttpMethod.GET,
-                    null,
-                    String.class
-            );
-
-            if (response.getStatusCode().is2xxSuccessful()) {
-                return JSONObject.parseObject(response.getBody());
-            } else {
-                JSONObject error = new JSONObject();
-                error.put("message", "请求失败，请稍后再试");
-                error.put("error", response.getStatusCode().toString());
-                return error;
-            }
-        } catch (Exception e) {
-            return buildErrorResponse("系统异常：" + e.getMessage());
-        }
+    public JSONObject getWeatherByCityName(@ToolParam(description = "city name") String city) {
+        ResponseEntity<String> response = restTemplate.exchange(
+                config.getUrl5()+"/"+city,
+                HttpMethod.GET,
+                null,
+                String.class
+        );
+        return JSONObject.parse(response.getBody());
     }
 
     @Tool(
-            name = "get_real_time_joke",
+            name = "get_ip_info",
             description = """
-        获取实时段子内容，支持指定查询类型（可选项：all/video/image/gif/text），可选填页码和每页返回数量。
-        type 参数为必填，page 和 count 为选填
+        Get ip information content.
         """
     )
-    public JSONObject getRealTimeJoke(
-            @NotNull(message = "type 不能为空，可选项：all/video/image/gif/text") String type,
-            String page,
-            String count
-    ) {
-        try {
-            StringBuilder urlBuilder = new StringBuilder(config.getUrl1());
-            urlBuilder.append("?type=").append(URLEncoder.encode(type, StandardCharsets.UTF_8));
-            if (page != null) {
-                urlBuilder.append("&page=").append(page);
-            }
-            if (count != null) {
-                urlBuilder.append("&count=").append(count);
-            }
-
-            ResponseEntity<String> response = restTemplate.exchange(
-                    urlBuilder.toString(),
-                    HttpMethod.GET,
-                    null,
-                    String.class
-            );
-
-            if (response.getStatusCode().is2xxSuccessful()) {
-                return JSONObject.parseObject(response.getBody());
-            } else {
-                JSONObject error = new JSONObject();
-                error.put("message", "请求失败，请稍后再试");
-                error.put("error", response.getStatusCode().toString());
-                return error;
-            }
-        } catch (Exception e) {
-            return buildErrorResponse("系统异常：" + e.getMessage());
-        }
+    public JSONObject getIpInfo(@ToolParam(description = "ip v4 address") String ip) {
+        ResponseEntity<String> response = restTemplate.exchange(
+                config.getUrl6()+"/"+ip,
+                HttpMethod.GET,
+                null,
+                String.class
+        );
+        return JSONObject.parse(response.getBody());
     }
-
 
     private JSONObject buildErrorResponse(String message) {
         JSONObject error = new JSONObject();
