@@ -15,4 +15,5 @@ public class OpenAPIConfig {
     private String url4;
     private String url5;
     private String url6;
+    private String url7;
 }

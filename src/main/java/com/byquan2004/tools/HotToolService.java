@@ -86,7 +86,7 @@ public class HotToolService {
     )
     public JSONObject getGoddessVideo() {
         try {
-            String url = config.getUrl3() + "?type=" + URLEncoder.encode("json", StandardCharsets.UTF_8);
+            String url = config.getUrl7() + "?type=" + URLEncoder.encode("json", StandardCharsets.UTF_8);
             ResponseEntity<String> response = restTemplate.exchange(
                     url, HttpMethod.GET, null, String.class);
 
