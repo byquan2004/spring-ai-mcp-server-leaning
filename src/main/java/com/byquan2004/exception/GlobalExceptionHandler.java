@@ -6,8 +6,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(value = RuntimeException.class)
+    public String handleRuntimeException(RuntimeException e) {
+        return "sorry,the request is too frequent, please try again later";
+    }
+
     @ExceptionHandler(value = Exception.class)
     public String handleException(Exception e) {
-        return "抱歉除了一点问题，请稍后再尝试吧～";
+        return "server error";
     }
 }

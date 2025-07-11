@@ -1,6 +1,6 @@
 spring:
   application:
-    name: spring-ai-mcp-server-leaning
+    name: spring-ai-mcp-server
   main:
     web-application-type: none
     banner-mode: off # 关闭 banner 避免stdio传输不相关数据
@@ -8,14 +8,18 @@ spring:
     mcp:
       server:
         stdio: true # 开始 standard input/output 模式
-        name: mcp-server-demo # 服务名称 使用时显示的server名称
+        name: mcp-server # 服务名称 使用时显示的server名称
         version: 0.0.1
+        capabilities:
+          tool: true
+          resource: false
+          prompt: false
+          completion: false
+        type: sync
 logging:
   level:
     root: off # 关闭 日志 避免stdio传输不相关数据
 free-api:
-  # 大学信息
-  url1: https://api.52vmy.cn/api/query/daxue
   # girl image
   url2: https://api.52vmy.cn/api/img/tu/girl
   # girl video
@@ -26,3 +30,5 @@ free-api:
   url5: https://goweather.xyz/weather
   # 根据ip获取详细信息
   url6: https://ipinfo.io
+  # hacker news
+  url7: https://news.ycombinator.com
